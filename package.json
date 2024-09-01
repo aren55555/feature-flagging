@@ -1,0 +1,46 @@
+{
+  "name": "typed-feature-flagging",
+  "version": "0.2.2",
+  "keywords": [
+    "typescript"
+  ],
+  "homepage": "https://github.com/mattpocock/typed-feature-flagging",
+  "author": "Aren Patel <git@arenpatel.com> (https://arenpatel.com)",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/aren55555/typed-feature-flagging.git"
+  },
+  "main": "dist/index.js",
+  "exports": {
+    "./package.json": "./package.json",
+    ".": {
+      "import": "./dist/index.js",
+      "default": "./dist/index.cjs"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "type": "module",
+  "scripts": {
+    "build": "tsup",
+    "check-exports": "attw --pack .",
+    "check-format": "prettier --check .",
+    "ci": "npm run build && npm run check-format && npm run check-exports && npm run lint && npm run test",
+    "dev": "vitest",
+    "format": "prettier --write .",
+    "lint": "tsc",
+    "local-release": "changeset version && changeset publish",
+    "prepublishOnly": "npm run ci",
+    "test": "vitest run"
+  },
+  "devDependencies": {
+    "@arethetypeswrong/cli": "^0.15.4",
+    "@changesets/cli": "^2.27.7",
+    "prettier": "^3.3.3",
+    "tsup": "^8.2.4",
+    "type-fest": "^4.26.0",
+    "typescript": "^5.5.4",
+    "vitest": "^2.0.5"
+  }
+}
