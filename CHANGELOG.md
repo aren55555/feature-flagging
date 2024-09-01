@@ -1,5 +1,11 @@
 # typed-feature-flagging
 
+## 1.0.0
+
+### Major Changes
+
+- ededc00: v1.0.0
+
 ## 0.2.2
 
 ### Patch Changes
