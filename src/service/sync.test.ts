@@ -12,15 +12,21 @@ type TestConfig = {
 describe('SyncFeatureFlagger', () => {
   const prepare = () => {
     const checkEnabled = vi.fn();
+    const loggerInfo = vi.fn();
+
     const ff: SyncGenericFeatureFlagger<TestConfig> =
       new SyncFeatureFlagger<TestConfig>({
         driver: {
           checkEnabled,
         },
+        logger: {
+          info: loggerInfo,
+        },
       });
 
     return {
       checkEnabled,
+      loggerInfo,
       ff,
     };
   };
@@ -48,15 +54,29 @@ describe('SyncFeatureFlagger', () => {
   });
 
   it('handles the case where the driver threw', () => {
-    const { checkEnabled, ff } = prepare();
+    const { checkEnabled, loggerInfo, ff } = prepare();
     vi.mocked(checkEnabled).mockImplementation(() => {
       throw new Error();
     });
 
     const got1 = ff.enabled('feature1', { contextValue1: 'foo' });
     expect(got1).toStrictEqual(DEFAULT);
+    expect(loggerInfo).toHaveBeenNthCalledWith(
+      1,
+      'driver#checkEnabled threw',
+      expect.objectContaining({
+        name: 'feature1',
+      }),
+    );
 
     const got2 = ff.enabled('feature2');
     expect(got2).toStrictEqual(DEFAULT);
+    expect(loggerInfo).toHaveBeenNthCalledWith(
+      2,
+      'driver#checkEnabled threw',
+      expect.objectContaining({
+        name: 'feature2',
+      }),
+    );
   });
 });

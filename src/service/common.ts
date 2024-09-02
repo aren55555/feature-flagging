@@ -4,3 +4,7 @@ export type CheckArgs = {
 };
 
 export const DEFAULT = false;
+
+export interface Logger {
+  info: (msg: string, context?: Record<string, unknown>) => void;
+}
