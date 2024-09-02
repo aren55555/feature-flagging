@@ -1,5 +1,11 @@
 # typed-feature-flagging
 
+## 1.0.1
+
+### Patch Changes
+
+- 7516f62: Added logger functionality for visibility
+
 ## 1.0.0
 
 ### Major Changes
