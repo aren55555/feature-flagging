@@ -1,4 +1,4 @@
-import type { SyncDriver } from '../../dist';
+import type { SyncDriver } from '../service';
 import type { CheckArgs } from '../service/common';
 
 type Value = ReturnType<SyncDriver['checkEnabled']>;
