@@ -1,6 +1,6 @@
 # typed-feature-flagging
 
-![NPM Version](https://img.shields.io/npm/v/typed-feature-flagging)
+[![NPM Version](https://img.shields.io/npm/v/typed-feature-flagging)](https://www.npmjs.com/package/typed-feature-flagging)
 
 ## Goals
 
