@@ -38,7 +38,8 @@ export class AsyncFeatureFlagger<C extends FeatureFlagToContextConfiguration>
       if (result === undefined) {
         if (this.logger?.info) {
           this.logger.info(
-            'driver#checkEnabled did no receive a value from the driver#checkEnabled call (undefined), returning default', { name, context}
+            'driver#checkEnabled did no receive a value from the driver#checkEnabled call (undefined), returning default',
+            { name, context },
           );
         }
         return DEFAULT;

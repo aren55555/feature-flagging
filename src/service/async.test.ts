@@ -49,7 +49,7 @@ describe('SyncFeatureFlagger', () => {
   });
 
   it('handles the case where the driver returned undefined', async () => {
-    const { checkEnabled,loggerError, loggerInfo, ff } = prepare();
+    const { checkEnabled, loggerError, loggerInfo, ff } = prepare();
     vi.mocked(checkEnabled).mockReturnValue(undefined);
 
     const got1 = await ff.enabled('feature1', { contextValue1: 'foo' });
@@ -76,7 +76,7 @@ describe('SyncFeatureFlagger', () => {
   });
 
   it('handles the case where the driver threw', async () => {
-    const { checkEnabled, loggerError,loggerInfo, ff } = prepare();
+    const { checkEnabled, loggerError, loggerInfo, ff } = prepare();
     vi.mocked(checkEnabled).mockRejectedValue(new Error());
 
     const got1 = await ff.enabled('feature1', { contextValue1: 'foo' });
