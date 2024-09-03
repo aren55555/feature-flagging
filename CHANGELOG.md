@@ -1,5 +1,11 @@
 # typed-feature-flagging
 
+## 1.0.2
+
+### Patch Changes
+
+- a869842: More verbose logging callbacks for greater observability
+
 ## 1.0.1
 
 ### Patch Changes
