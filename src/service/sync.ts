@@ -12,20 +12,40 @@ export class SyncFeatureFlagger<C extends FeatureFlagToContextConfiguration>
   implements SyncGenericFeatureFlagger<C>
 {
   private readonly driver: SyncDriver;
-  private readonly logger?: Logger;
+  private readonly logger?: Partial<Logger>;
 
-  constructor({ driver, logger }: { driver: SyncDriver; logger?: Logger }) {
+  constructor({
+    driver,
+    logger,
+  }: {
+    driver: SyncDriver;
+    logger?: Partial<Logger>;
+  }) {
     this.driver = driver;
     this.logger = logger;
   }
 
   public enabled<K extends keyof C>(name: K, context?: C[K]): boolean {
     try {
-      return (
-        this.driver.checkEnabled({ name: name.toString(), context }) ?? DEFAULT
-      );
+      const result = this.driver.checkEnabled({
+        name: name.toString(),
+        context,
+      });
+      if (result === undefined) {
+        if (this.logger?.info) {
+          this.logger.info(
+            'driver#checkEnabled did no receive a value from the driver#checkEnabled call (undefined), returning default', { name, context}
+          );
+        }
+        return DEFAULT;
+      }
+
+      return result;
     } catch (err) {
-      this.logger?.info('driver#checkEnabled threw', { name, context, err });
+      if (this.logger?.error) {
+        this.logger.error('driver#checkEnabled threw', { name, context, err });
+      }
+
       return DEFAULT;
     }
   }

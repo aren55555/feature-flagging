@@ -5,6 +5,9 @@ export type CheckArgs = {
 
 export const DEFAULT = false;
 
+type LogCallback = (msg: string, context?: Record<string, unknown>) => void;
+
 export interface Logger {
-  info: (msg: string, context?: Record<string, unknown>) => void;
+  error: LogCallback;
+  info: LogCallback;
 }

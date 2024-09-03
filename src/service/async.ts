@@ -13,9 +13,15 @@ export class AsyncFeatureFlagger<C extends FeatureFlagToContextConfiguration>
   implements MaybeAsyncGenericFeatureFlagger<C>
 {
   private readonly driver: AsyncDriver;
-  private readonly logger?: Logger;
+  private readonly logger?: Partial<Logger>;
 
-  constructor({ driver, logger }: { driver: AsyncDriver; logger?: Logger }) {
+  constructor({
+    driver,
+    logger,
+  }: {
+    driver: AsyncDriver;
+    logger?: Partial<Logger>;
+  }) {
     this.driver = driver;
     this.logger = logger;
   }
@@ -25,14 +31,25 @@ export class AsyncFeatureFlagger<C extends FeatureFlagToContextConfiguration>
     context?: C[K],
   ): Promise<boolean> {
     try {
-      return (
-        (await this.driver.checkEnabled({
-          name: name.toString(),
-          context,
-        })) ?? DEFAULT
-      );
+      const result = await this.driver.checkEnabled({
+        name: name.toString(),
+        context,
+      });
+      if (result === undefined) {
+        if (this.logger?.info) {
+          this.logger.info(
+            'driver#checkEnabled did no receive a value from the driver#checkEnabled call (undefined), returning default', { name, context}
+          );
+        }
+        return DEFAULT;
+      }
+
+      return result;
     } catch (err) {
-      this.logger?.info('driver#checkEnabled threw', { name, context, err });
+      if (this.logger?.error) {
+        this.logger.error('driver#checkEnabled threw', { name, context, err });
+      }
+
       return DEFAULT;
     }
   }

@@ -13,6 +13,7 @@ describe('SyncFeatureFlagger', () => {
   const prepare = () => {
     const checkEnabled = vi.fn();
     const loggerInfo = vi.fn();
+    const loggerError = vi.fn();
 
     const ff: SyncGenericFeatureFlagger<TestConfig> =
       new SyncFeatureFlagger<TestConfig>({
@@ -21,18 +22,20 @@ describe('SyncFeatureFlagger', () => {
         },
         logger: {
           info: loggerInfo,
+          error: loggerError,
         },
       });
 
     return {
       checkEnabled,
       loggerInfo,
+      loggerError,
       ff,
     };
   };
 
   it('can call thru to the driver to obtain a value', () => {
-    const { checkEnabled, ff } = prepare();
+    const { checkEnabled, loggerError, loggerInfo, ff } = prepare();
     vi.mocked(checkEnabled).mockReturnValue(true);
 
     const got1 = ff.enabled('feature1', { contextValue1: 'foo' });
@@ -40,28 +43,45 @@ describe('SyncFeatureFlagger', () => {
 
     const got2 = ff.enabled('feature2');
     expect(got2).toStrictEqual(true);
+
+    expect(loggerError).not.toHaveBeenCalled();
+    expect(loggerInfo).not.toHaveBeenCalled();
   });
 
   it('handles the case where the driver returned undefined', () => {
-    const { checkEnabled, ff } = prepare();
+    const { checkEnabled, loggerInfo, ff } = prepare();
     vi.mocked(checkEnabled).mockReturnValue(undefined);
 
     const got1 = ff.enabled('feature1', { contextValue1: 'foo' });
     expect(got1).toStrictEqual(DEFAULT);
+    expect(loggerInfo).toHaveBeenNthCalledWith(
+      1,
+      expect.stringMatching(/returning default/),
+      expect.objectContaining({
+        name: 'feature1',
+      }),
+    );
 
     const got2 = ff.enabled('feature2');
     expect(got2).toStrictEqual(DEFAULT);
+    expect(loggerInfo).toHaveBeenNthCalledWith(
+      2,
+      expect.stringMatching(/returning default/),
+      expect.objectContaining({
+        name: 'feature2',
+      }),
+    );
   });
 
   it('handles the case where the driver threw', () => {
-    const { checkEnabled, loggerInfo, ff } = prepare();
+    const { checkEnabled, loggerError, ff } = prepare();
     vi.mocked(checkEnabled).mockImplementation(() => {
       throw new Error();
     });
 
     const got1 = ff.enabled('feature1', { contextValue1: 'foo' });
     expect(got1).toStrictEqual(DEFAULT);
-    expect(loggerInfo).toHaveBeenNthCalledWith(
+    expect(loggerError).toHaveBeenNthCalledWith(
       1,
       'driver#checkEnabled threw',
       expect.objectContaining({
@@ -71,7 +91,7 @@ describe('SyncFeatureFlagger', () => {
 
     const got2 = ff.enabled('feature2');
     expect(got2).toStrictEqual(DEFAULT);
-    expect(loggerInfo).toHaveBeenNthCalledWith(
+    expect(loggerError).toHaveBeenNthCalledWith(
       2,
       'driver#checkEnabled threw',
       expect.objectContaining({
