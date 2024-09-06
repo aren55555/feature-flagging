@@ -1,5 +1,11 @@
 # typed-feature-flagging
 
+## 1.1.1
+
+### Patch Changes
+
+- 6fbd75e: bump
+
 ## 1.1.0
 
 ### Minor Changes
