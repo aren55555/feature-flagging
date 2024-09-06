@@ -1,5 +1,11 @@
 # typed-feature-flagging
 
+## 1.1.0
+
+### Minor Changes
+
+- 1d4b83b: Added support for a global context, with warnings when it shadows
+
 ## 1.0.2
 
 ### Patch Changes
