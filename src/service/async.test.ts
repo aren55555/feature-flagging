@@ -24,6 +24,9 @@ describe('SyncFeatureFlagger', () => {
           info: loggerInfo,
           error: loggerError,
         },
+        globalContext: {
+          global: 'global',
+        },
       });
 
     return {
@@ -40,9 +43,20 @@ describe('SyncFeatureFlagger', () => {
 
     const got1 = await ff.enabled('feature1', { contextValue1: 'foo' });
     expect(got1).toStrictEqual(true);
+    expect(checkEnabled).toHaveBeenNthCalledWith(1, {
+      name: 'feature1',
+      context: expect.objectContaining({
+        contextValue1: 'foo',
+        global: 'global',
+      }),
+    });
 
     const got2 = await ff.enabled('feature2');
     expect(got2).toStrictEqual(true);
+    expect(checkEnabled).toHaveBeenNthCalledWith(2, {
+      name: 'feature2',
+      context: undefined,
+    });
 
     expect(loggerError).not.toHaveBeenCalled();
     expect(loggerInfo).not.toHaveBeenCalled();
